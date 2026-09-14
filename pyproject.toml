@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyrora"
+version = "0.1.0"
+description = "A modular, Laravel-inspired ASGI framework for Python."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Pyrora Contributors" }]
+keywords = ["asgi", "starlette", "web", "framework", "jinja"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+  "starlette>=0.37",
+  "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+server = ["uvicorn[standard]>=0.27"]
+dev = ["pytest>=8", "httpx>=0.27", "ruff>=0.6", "build>=1.2"]
+redis = ["redis>=5"]
+socketio = ["python-socketio>=5"]
+
+[project.scripts]
+pyrora = "pyrora.commands:main"
+
+[project.entry-points."pyrora.plugins"]
+# Third-party packages may expose plugins here, e.g. billing = "pyrora_billing:BillingPlugin".
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["B008"]

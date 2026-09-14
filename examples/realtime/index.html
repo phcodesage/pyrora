@@ -1,0 +1,19 @@
+<!doctype html>
+<button id="join">Join</button><video id="local" autoplay muted></video>
+<script>
+let socket, peer;
+document.querySelector('#join').onclick = async () => {
+  socket = new WebSocket(`ws://${location.host}/signaling/demo`);
+  peer = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+  peer.onicecandidate = ({candidate}) => candidate && socket.send(JSON.stringify({event:'ice-candidate', candidate}));
+  const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+  document.querySelector('#local').srcObject = stream;
+  stream.getTracks().forEach(track => peer.addTrack(track, stream));
+  socket.onmessage = async ({data}) => {
+    const message = JSON.parse(data);
+    if (message.event === 'offer') { await peer.setRemoteDescription(message.sdp); const answer = await peer.createAnswer(); await peer.setLocalDescription(answer); socket.send(JSON.stringify({event:'answer', to:message.from, sdp:answer})); }
+    if (message.event === 'answer') await peer.setRemoteDescription(message.sdp);
+    if (message.event === 'ice-candidate') await peer.addIceCandidate(message.candidate);
+  };
+};
+</script>
