@@ -78,6 +78,7 @@ h3 { font-size: 1.28rem; font-weight: 700; line-height: 1.25; letter-spacing: -0
 pre { position: relative; margin: 0; overflow: auto; padding: 2.2rem 1.6rem 1.6rem; border: 1px solid var(--rule); border-radius: 0; background: #f8f8f8; color: #1f1f1f; box-shadow: 8px 8px 0 var(--paper-dark); font: 0.78rem/1.75 "Fragment Mono", monospace; }
 pre::before { content: "app.py"; position: absolute; top: 0.6rem; left: 1.55rem; color: var(--faded-ink); font: 0.62rem "Fragment Mono", monospace; }
 .muted { color: #613c9c; }.decorator { color: var(--moss); }.string { color: #a33c28; }.value { color: #785600; }
+.token-keyword { color: #075da8; }.token-string { color: #a43f2b; }.token-decorator { color: #74449d; }.token-constant, .token-number { color: #7a5900; }.token-comment { color: #627061; font-style: italic; }.token-command { color: #075da8; font-weight: 500; }.token-flag { color: #74449d; }.token-package { color: #a43f2b; }
 
 .features { padding: 1.1rem 0 7.8rem; }
 .section-heading { max-width: 42rem; margin-bottom: 2.8rem; }
@@ -114,6 +115,8 @@ footer { display: flex; justify-content: space-between; gap: 1rem; padding: 1.8r
 .docs-intro h1 { font-size: clamp(3rem, 7vw, 5.7rem); }
 .docs-intro > p:not(.eyebrow) { max-width: 43rem; color: var(--faded-ink); font-size: 1.1rem; }
 .docs-note { margin-top: 1.6rem; padding-left: 1rem; border-left: 3px solid var(--rust); font-size: 0.94rem !important; }
+.docs-store-link { margin-top: 0.85rem; border-left-color: var(--moss); }
+.docs-store-link a { color: #075da8; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18rem; }
 .docs-shell { display: grid; grid-template-columns: 13.5rem minmax(0, 1fr); gap: clamp(2rem, 7vw, 7rem); padding-top: 3.5rem; }
 .docs-nav { position: sticky; top: 1.5rem; align-self: start; display: grid; gap: 0.35rem; padding: 0.9rem 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 0.82rem; }
 .docs-nav p { margin-bottom: 0.45rem; color: var(--rust); font: 0.66rem "Fragment Mono", monospace; letter-spacing: 0.1em; text-transform: uppercase; }
