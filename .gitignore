@@ -13,3 +13,7 @@ venv/
 node_modules/
 frontend/dist/
 .wrangler/
+deployments/cloudflare_store/src/vendor/
+deployments/cloudflare_store/.venv-workers/
+deployments/cloudflare_store/python_modules/
+deployments/cloudflare_store/pylock.toml

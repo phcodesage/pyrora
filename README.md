@@ -140,6 +140,20 @@ ruff check src tests
 python -m build
 ```
 
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. The
+repository has a [Code of Conduct](CODE_OF_CONDUCT.md), a responsible-disclosure
+[security policy](SECURITY.md), issue forms, and CI for supported Python
+versions.
+
+## Cloudflare storefront deployment
+
+The Shopify-style store sample at [pyrora.pages.dev/store](https://pyrora.pages.dev/store/)
+uses a Pyrora ASGI API on Cloudflare Python Workers with D1 for its catalog and
+submitted orders. Its deployment files and operational boundary are documented
+in [deployments/cloudflare_store](deployments/cloudflare_store/). It records
+order requests only; payment collection, fulfilment, tax, and inventory
+reservation require separately configured commerce services.
+
 ## Current limitations and roadmap
 
 This 0.1.0 release is an in-process MVP. Its room backend does not broadcast
@@ -152,4 +166,5 @@ without imposing SQLAlchemy or a database on every Pyrora app.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Pyrora is released under the [MIT License](LICENSE). Contributions are accepted
+under the same license.

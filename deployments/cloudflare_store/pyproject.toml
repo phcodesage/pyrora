@@ -1,0 +1,9 @@
+[project]
+name = "pyrora-cloudflare-store"
+version = "0.1.0"
+description = "Cloudflare Python Worker deployment for the Pyrora storefront sample."
+requires-python = ">=3.13"
+dependencies = [
+  "starlette>=0.37",
+  "jinja2>=3.1",
+]

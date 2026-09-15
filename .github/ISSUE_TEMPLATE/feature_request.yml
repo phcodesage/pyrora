@@ -1,0 +1,25 @@
+name: Feature request
+description: Propose a focused improvement to Pyrora or a future plugin boundary.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the developer need, not only a proposed API.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: Include API shape, alternatives, and whether this belongs in a plugin.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and dependency impact
+    validations:
+      required: true

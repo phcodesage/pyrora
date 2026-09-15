@@ -1,0 +1,6 @@
+.venv-workers/
+__pycache__/
+migrations/
+pylock.toml
+README.md
+build_bundle.py

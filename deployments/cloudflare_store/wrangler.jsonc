@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "pyrora-store-api",
+  "main": "entry.py",
+  "compatibility_date": "2026-09-15",
+  "compatibility_flags": ["python_workers"],
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "STORE_DB",
+      "database_name": "pyrora-store",
+      "database_id": "12926c7d-0715-4e51-969e-df53cfaa6693"
+    }
+  ]
+}
