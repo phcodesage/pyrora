@@ -1,0 +1,10 @@
+<!doctype html>
+<title>Standard Supply</title>
+<h1>Standard Supply</h1>
+<p>A small Pyrora storefront sample.</p>
+<ul>
+  {% for product in products %}
+  <li><strong>{{ product.name }}</strong> — ${{ product.price }}</li>
+  {% endfor %}
+</ul>
+<p>Browse the API at <a href="/api/products">/api/products</a>.</p>

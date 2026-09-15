@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A simple storefront sample built to demonstrate Pyrora page and API patterns." />
+    <title>Standard Supply — Pyrora store sample</title>
+    <link rel="stylesheet" href="store.css" />
+  </head>
+  <body>
+    <div class="notice">Pyrora sample project <span>·</span> Browser-side demo cart only</div>
+    <header class="store-header">
+      <a class="wordmark" href="./">STANDARD<br />SUPPLY</a>
+      <nav aria-label="Store navigation">
+        <a href="#shop">Shop</a>
+        <a href="#story">Our story</a>
+        <a href="../docs/">Pyrora docs</a>
+      </nav>
+      <button class="cart-button" type="button" aria-label="Open demo cart">Bag <span id="cart-count">0</span></button>
+    </header>
+
+    <main>
+      <section class="store-hero" aria-labelledby="store-title">
+        <div>
+          <p class="kicker">Objects for everyday rituals</p>
+          <h1 id="store-title">Useful things,<br />kept simple.</h1>
+          <a class="shop-link" href="#shop">Shop the collection <span>↓</span></a>
+        </div>
+        <figure class="hero-image"><img src="assets/standard-supply-products.png" alt="A green water bottle, natural canvas tote, and amber candle" /></figure>
+      </section>
+
+      <section id="shop" class="collection" aria-labelledby="collection-title">
+        <div class="collection-heading">
+          <div><p class="kicker">The essentials</p><h2 id="collection-title">Made for the everyday.</h2></div>
+          <div class="filters" aria-label="Product filters">
+            <button class="filter is-active" type="button" data-filter="all">All</button>
+            <button class="filter" type="button" data-filter="carry">Carry</button>
+            <button class="filter" type="button" data-filter="home">Home</button>
+          </div>
+        </div>
+        <div class="product-grid">
+          <article class="product" data-category="carry">
+            <div class="product-image image-bottle"><img src="assets/standard-supply-products.png" alt="Olive insulated water bottle" /></div>
+            <div class="product-meta"><div><h3>Day Bottle</h3><p>Olive · 500 ml</p></div><strong>$34</strong></div>
+            <button class="add-button" type="button" data-product="Day Bottle">Add to bag <span>+</span></button>
+          </article>
+          <article class="product" data-category="carry">
+            <div class="product-image image-tote"><img src="assets/standard-supply-products.png" alt="Natural canvas market tote" /></div>
+            <div class="product-meta"><div><h3>Market Tote</h3><p>Natural canvas</p></div><strong>$26</strong></div>
+            <button class="add-button" type="button" data-product="Market Tote">Add to bag <span>+</span></button>
+          </article>
+          <article class="product" data-category="home">
+            <div class="product-image image-candle"><img src="assets/standard-supply-products.png" alt="Amber glass candle" /></div>
+            <div class="product-meta"><div><h3>After Rain</h3><p>Cedar · 40 hours</p></div><strong>$28</strong></div>
+            <button class="add-button" type="button" data-product="After Rain">Add to bag <span>+</span></button>
+          </article>
+        </div>
+        <p class="cart-status" aria-live="polite" id="cart-status">Your demo bag is empty.</p>
+      </section>
+
+      <section id="story" class="store-story">
+        <p class="kicker">A sample storefront</p>
+        <div><h2>This is the shape, not the stack.</h2><p>Use Pyrora routes and Jinja templates for a storefront page, return a product catalog from an API, and add your own database, payments, inventory, and authentication through dedicated integrations.</p><a href="https://github.com/phcodesage/pyrora/tree/main/examples/store">Read the sample source ↗</a></div>
+      </section>
+    </main>
+
+    <footer><a href="../">Pyrora</a><span>Store sample / no purchase flow</span><a href="../docs/">Documentation</a></footer>
+    <script src="store.js"></script>
+  </body>
+</html>
