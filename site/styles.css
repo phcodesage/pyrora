@@ -25,18 +25,23 @@ a { color: inherit; text-decoration: none; }
 
 .site-header, main, footer { width: min(1120px, calc(100% - 2.5rem)); margin: auto; }
 .site-header {
-  min-height: 5.4rem;
+  min-height: 6.15rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
   border-bottom: 1px solid var(--rule);
 }
-.brand { display: flex; align-items: baseline; gap: 0.7rem; font-family: "Fragment Mono", monospace; }
-.brand span { font-weight: 500; letter-spacing: 0.1em; }
-.brand small { color: var(--faded-ink); font-size: 0.67rem; letter-spacing: 0.03em; }
-nav { display: flex; gap: 1.45rem; font: 0.68rem/1 "Fragment Mono", monospace; text-transform: uppercase; }
-nav a { border-bottom: 1px solid transparent; padding: 0.3rem 0; }
-nav a:hover { border-color: var(--ink); }
+.brand { display: inline-flex; align-items: center; gap: 0.78rem; color: var(--ink); }
+.brand-mark { width: 2.35rem; height: 2.35rem; display: grid; place-items: center; flex: 0 0 auto; background: var(--ink); color: #fff; font: 800 1.2rem/1 Manrope, Arial, sans-serif; letter-spacing: -0.08em; }
+.brand-copy { display: grid; gap: 0.2rem; min-width: max-content; }
+.brand-copy strong { font: 800 0.88rem/1 Manrope, Arial, sans-serif; letter-spacing: 0.08em; }
+.brand-copy small { color: var(--faded-ink); font: 0.64rem/1.2 "Fragment Mono", monospace; letter-spacing: 0.015em; }
+.site-nav { display: flex; align-items: center; gap: 0.15rem; padding: 0.28rem; border: 1px solid var(--rule); background: #f7f7f7; }
+.site-nav a { min-height: 2.25rem; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.7rem; color: var(--faded-ink); border: 1px solid transparent; font: 500 0.75rem/1 var(--body-font); letter-spacing: -0.01em; white-space: nowrap; }
+.site-nav a:hover, .site-nav a.is-current { color: var(--ink); border-color: var(--rule); background: #fff; }
+.site-nav .nav-source { color: #fff; border-color: var(--ink); background: var(--ink); }
+.site-nav .nav-source:hover { border-color: var(--moss); background: var(--moss); }
 
 .hero {
   min-height: 39rem;
@@ -98,14 +103,14 @@ footer { display: flex; justify-content: space-between; gap: 1rem; padding: 1.8r
 
 @media (max-width: 760px) {
   .site-header, main, footer { width: min(100% - 1.5rem, 1120px); }
-  nav { gap: 0.75rem; font-size: 0.61rem; }.brand small { display: none; }
+  .site-header { min-height: 0; padding: 0.9rem 0; gap: 0.8rem; }.brand-copy small { display: none; }.site-nav { gap: 0; }.site-nav a { min-height: 2.1rem; padding: 0.4rem 0.48rem; font-size: 0.71rem; }
   .hero { min-height: 34rem; padding-top: 4rem; }.hero::after { right: 0; bottom: 10%; }.margin-note { display: none; }
   .quickstart, .ecosystem { grid-template-columns: 1fr; padding: 5rem 0; }.ecosystem { padding: 2rem; }
   .feature-grid { grid-template-columns: 1fr 1fr; }.number { margin-bottom: 2.2rem; }
   .install { padding: 5rem 0; } footer { flex-direction: column; }
 }
 @media (max-width: 450px) {
-  .site-header { min-height: 4.5rem; }.site-header nav a:first-child { display: none; }
+  .site-header { display: grid; grid-template-columns: 1fr; }.site-nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; }.site-nav a { flex: 0 0 auto; }
   .actions { flex-direction: column; align-items: stretch; }.feature-grid { grid-template-columns: 1fr; }
   .install-command { flex-direction: column; gap: 0.35rem; padding: 0.7rem; }.install-command span { font-size: 0.75rem; }
 }
