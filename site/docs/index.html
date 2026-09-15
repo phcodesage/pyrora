@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Pyrora framework documentation: routing, templates, plugins, realtime, and React." />
+    <title>Documentation — Pyrora</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../" aria-label="Pyrora home"><span>PYRORA</span><small>Documentation / 0.1.0</small></a>
+      <nav aria-label="Documentation navigation">
+        <a href="../">Home</a>
+        <a href="#quickstart">Start</a>
+        <a href="#plugins">Plugins</a>
+        <a href="https://github.com/phcodesage/pyrora">Source ↗</a>
+      </nav>
+    </header>
+
+    <main class="docs-page">
+      <section class="docs-intro" aria-labelledby="docs-title">
+        <p class="eyebrow">Reference guide · Pyrora 0.1.0</p>
+        <h1 id="docs-title">Make a small app.<br />Keep the architecture open.</h1>
+        <p>Pyrora is an alpha Python framework built on Starlette. Its core is intentionally narrow: ASGI, templates, routing, lifecycle, services, plugins, and in-process realtime primitives.</p>
+        <p class="docs-note"><strong>Compatibility:</strong> Python 3.10 or newer. The core depends only on Starlette and Jinja2.</p>
+      </section>
+
+      <div class="docs-shell">
+        <aside class="docs-nav" aria-label="Documentation sections">
+          <p>Contents</p>
+          <a href="#quickstart">Quick start</a>
+          <a href="#routing">Routing &amp; controllers</a>
+          <a href="#templates">Templates &amp; static files</a>
+          <a href="#config">Configuration &amp; services</a>
+          <a href="#plugins">Plugins</a>
+          <a href="#realtime">WebSockets &amp; WebRTC</a>
+          <a href="#react">React preset</a>
+          <a href="#cli">CLI</a>
+          <a href="#limits">Current limits</a>
+        </aside>
+
+        <article class="docs-content">
+          <section id="quickstart">
+            <p class="eyebrow">01 / Quick start</p>
+            <h2>Install and run a first app</h2>
+            <p>Create an environment, install the optional development server, and start a project.</p>
+            <pre><code>pip install "pyrora[server]"
+pyrora new blog
+cd blog
+pyrora serve --reload</code></pre>
+            <p>The generated application starts with an HTML page and an API health endpoint. A handwritten app can be as small as this:</p>
+            <pre><code>from pyrora import Pyrora, json, render
+
+app = Pyrora(debug=True)
+
+@app.get("/")
+async def home(request):
+    return render(request, "home.html", title="Hello, Pyrora")
+
+@app.get("/api/health")
+async def health(request):
+    return json({"ok": True})</code></pre>
+          </section>
+
+          <section id="routing">
+            <p class="eyebrow">02 / Routing &amp; controllers</p>
+            <h2>Route normal functions and coroutines</h2>
+            <p><code>get</code>, <code>post</code>, <code>put</code>, <code>patch</code>, and <code>delete</code> are thin route decorators. Route names and arbitrary metadata are available to tooling through <code>app.route_metadata</code>.</p>
+            <pre><code>@app.route("/reports", methods=["GET", "POST"], name="reports")
+async def reports(request):
+    return {"ok": True}
+
+@app.post("/notes", name="notes.create", metadata={"auth": "member"})
+def create_note(request):
+    return json({"created": True}, status_code=201)</code></pre>
+            <p>Group modular endpoints with a <code>Router</code>.</p>
+            <pre><code>from pyrora import Router
+
+api = Router(prefix="/v1")
+
+@api.get("/status")
+def status(request):
+    return {"ok": True}
+
+app.include_router(api, prefix="/api")</code></pre>
+            <h3>Controllers</h3>
+            <p>Controller method names map directly to HTTP methods. A missing method receives Starlette’s 405 response with an <code>Allow</code> header.</p>
+            <pre><code>from pyrora import Controller, json
+
+class HealthController(Controller):
+    async def get(self):
+        return json({"status": "healthy"})
+
+app.controller("/health", HealthController)</code></pre>
+            <h3>Responses</h3>
+            <p>Use <code>json(data, status_code=200)</code>, <code>html(content)</code>, <code>text(content)</code>, and <code>redirect(url, status_code=303)</code>. Mappings and lists returned directly from an endpoint are encoded as JSON; strings become HTML responses.</p>
+          </section>
+
+          <section id="templates">
+            <p class="eyebrow">03 / Templates &amp; static files</p>
+            <h2>Server-rendered by default</h2>
+            <p>Pyrora discovers <code>templates/</code> and <code>static/</code> beneath the application root. Static assets are mounted at <code>/static</code>. Jinja2 autoescaping is enabled for HTML templates.</p>
+            <pre><code>@app.get("/profile")
+async def profile(request):
+    return render(
+        request,
+        "profile.html",
+        title="Profile",
+        user=current_user,
+    )</code></pre>
+            <p>Plugins can add templates without touching your application folder:</p>
+            <pre><code>app.add_template_directory("path/to/plugin/templates")
+app.mount_static("/plugin-assets", "path/to/plugin/static", name="plugin-assets")</code></pre>
+          </section>
+
+          <section id="config">
+            <p class="eyebrow">04 / Configuration &amp; services</p>
+            <h2>Explicit state, local to your app</h2>
+            <p><code>Config</code> merges defaults, a <code>.env</code> file, then OS environment variables. Later sources win. Values remain strings unless you request a cast.</p>
+            <pre><code>from pyrora import Config
+
+config = Config({"APP_NAME": "Notes"})
+config.get("APP_DEBUG", cast=bool)
+config.require("SECRET_KEY")
+config.plugin("billing").get("currency")</code></pre>
+            <p>The service container belongs to one <code>Pyrora</code> instance—there is no hidden global registry.</p>
+            <pre><code>app.container.bind("mailer", Mailer)       # a new instance on each resolve
+app.container.singleton("cache", Cache)    # one lazy instance
+app.container.instance("settings", settings)
+
+mailer = app.container.resolve("mailer")</code></pre>
+            <p>Resolving an unregistered name raises a <code>ServiceNotFoundError</code> that lists available services.</p>
+          </section>
+
+          <section id="plugins">
+            <p class="eyebrow">05 / Plugins</p>
+            <h2>Providers are installed on purpose</h2>
+            <p>Plugins are never loaded merely because they are installed in the Python environment. Add one at application setup, and Pyrora will validate names and declared dependencies.</p>
+            <pre><code>from pyrora.plugins import Plugin
+
+class BillingPlugin(Plugin):
+    name = "billing"
+    version = "0.1.0"
+    dependencies = ()
+    config_defaults = {"BILLING_CURRENCY": "USD"}
+
+    def register(self, app):
+        app.container.singleton("billing", BillingService)
+        app.add_route("/billing/health", self.health)
+        app.add_command("billing:status", self.status)
+        app.add_health_check("billing", self.check)
+
+    async def boot(self, app):
+        await self.connect()
+
+app.install(BillingPlugin())</code></pre>
+            <p>During <code>register</code>, a plugin may add services, routes, middleware, commands, event listeners, template paths, static paths, configuration defaults, health checks, and startup or shutdown work. Its optional async <code>boot</code> hook runs once at ASGI startup.</p>
+            <p>Third-party packages can publish an entry point in the <code>pyrora.plugins</code> group. <code>pyrora plugins discover</code> lists those entry points without importing them; loading one remains an explicit application action.</p>
+          </section>
+
+          <section id="realtime">
+            <p class="eyebrow">06 / WebSockets &amp; WebRTC</p>
+            <h2>Realtime without a mandatory broker</h2>
+            <p>WebSocket handlers receive Starlette’s WebSocket object, including <code>accept()</code>, <code>send_text()</code>, <code>send_json()</code>, <code>receive_text()</code>, <code>receive_json()</code>, and <code>close()</code>.</p>
+            <pre><code>@app.websocket("/ws/chat")
+async def chat(socket):
+    await socket.accept()
+    while True:
+        message = await socket.receive_json()
+        await socket.send_json({"echo": message})</code></pre>
+            <p>Use <code>app.connections</code> for in-memory rooms. Pyrora removes disconnected sockets from rooms automatically.</p>
+            <pre><code>app.connections.join("support", socket)
+await app.connections.broadcast("support", {"event": "message", "data": data})
+app.connections.leave("support", socket)</code></pre>
+            <h3>WebRTC signaling</h3>
+            <pre><code>from pyrora.realtime import WebRTCSignaling
+
+signaling = WebRTCSignaling(app.connections)
+app.websocket("/signaling/{room_id}")(signaling.endpoint)</code></pre>
+            <p><code>WebRTCSignaling</code> forwards room join/leave notices, offers, answers, ICE candidates, and hang-up events. It is only a signaling endpoint: browser peers carry audio and video directly. Pyrora does not relay or record media. Production calls commonly need STUN/TURN such as Coturn; larger products may use LiveKit, mediasoup, or other media infrastructure.</p>
+          </section>
+
+          <section id="react">
+            <p class="eyebrow">07 / Optional React preset</p>
+            <h2>Bring React only when it earns its place</h2>
+            <pre><code>pyrora new realtime-app --react
+cd realtime-app
+pyrora frontend install
+pyrora frontend dev</code></pre>
+            <p>The preset creates a TypeScript Vite application with a responsive shell, API helper, WebSocket client, native WebRTC signaling helper, chat example, and room example. Vite proxies API and realtime paths in development; the generated backend allows the Vite origin with CORS.</p>
+            <pre><code>pyrora frontend build</code></pre>
+            <p>For same-origin production delivery, point Pyrora at the compiled output:</p>
+            <pre><code>app = Pyrora(
+    frontend_dist="frontend/dist",
+    spa_fallback=True,
+)</code></pre>
+          </section>
+
+          <section id="cli">
+            <p class="eyebrow">08 / CLI</p>
+            <h2>Useful commands</h2>
+            <div class="command-grid">
+              <code>pyrora new blog</code><span>Create a server-rendered project.</span>
+              <code>pyrora new dashboard --react</code><span>Create a backend plus optional React preset.</span>
+              <code>pyrora serve --reload</code><span>Run <code>app:app</code> through Uvicorn.</span>
+              <code>pyrora serve --app backend.app:app</code><span>Choose a module target explicitly.</span>
+              <code>pyrora routes</code><span>List named routes and methods.</span>
+              <code>pyrora plugins list</code><span>List explicitly installed plugins.</span>
+              <code>pyrora plugins discover</code><span>List entry points without loading code.</span>
+              <code>pyrora make:controller UserController</code><span>Create a controller file.</span>
+              <code>pyrora make:view dashboard/home</code><span>Create a Jinja template.</span>
+            </div>
+          </section>
+
+          <section id="limits">
+            <p class="eyebrow">09 / Current limits</p>
+            <h2>What the alpha does not provide yet</h2>
+            <p>Pyrora has no built-in database, authentication, queues, mailer, billing system, admin panel, Redis broadcaster, Socket.IO transport, media relay, or TURN service. Those capabilities should arrive as separate integrations so applications do not inherit dependencies they do not use.</p>
+            <p>The included room backend is in-memory and process-local. It is suitable for a single ASGI worker; a future Redis or Socket.IO adapter can provide cross-worker distribution without changing endpoint code.</p>
+            <p>For contributor setup, run <code>pip install -e ".[dev,server]"</code>, then <code>pytest</code> and <code>ruff check src tests</code>. The repository includes routing, template, configuration, container, plugin, realtime, signaling, generator, SPA, and CLI coverage.</p>
+            <a class="button primary" href="https://github.com/phcodesage/pyrora">Read the repository</a>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer>
+      <span>© 2026 Pyrora Contributors</span>
+      <span>Documentation / 0.1.0</span>
+    </footer>
+  </body>
+</html>
